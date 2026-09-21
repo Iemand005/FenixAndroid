@@ -1,0 +1,11 @@
+build
+.vs
+*.gone
+.cache
+.qtcreator
+out
+gradle
+.gradle
+gradle-home
+*.so
+*.log
