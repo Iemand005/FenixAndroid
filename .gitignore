@@ -4,7 +4,6 @@ build
 .cache
 .qtcreator
 out
-gradle
 .gradle
 gradle-home
 *.so
