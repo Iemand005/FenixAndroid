@@ -4,7 +4,6 @@ plugins {
 
 def projectFenix = rootProject.projectDir.parentFile.parentFile
 def arm64BuildDir = file("${projectFenix}/build/android-arm64")
-def v7aBuildDir = file("${projectFenix}/build/android-armeabi-v7a")
 def v7aFlatBuildDir = file("${projectFenix}/build/android-armeabi-v7a-flat")
 def resourcesDir = file("${projectFenix}/Foxcraft/resources")
 def stagedAssetsDir = file("${projectDir}/build/generated/stagedAssets")
@@ -23,16 +22,12 @@ android {
     }
     flavorDimensions "target"
     productFlavors {
-        // Full XR APK: arm64-v8a + armeabi-v7a with the OpenXR loader (default).
+        // Full XR APK: arm64-v8a with the OpenXR loader. All OpenXR-capable
+        // devices are 64-bit, so the 32-bit build never ships with OpenXR.
         xr {
             dimension "target"
-        }
-        // 32-bit-only XR APK: excludes arm64-v8a for Android 5 / 32-bit-only
-        // devices and headsets that only have an armeabi-v7a runtime.
-        xr32 {
-            dimension "target"
             ndk {
-                abiFilters 'armeabi-v7a'
+                abiFilters 'arm64-v8a'
             }
         }
         // Flat-screen-only APK: 32-bit, no OpenXR at all. The engine is built
@@ -42,6 +37,13 @@ android {
             dimension "target"
             ndk {
                 abiFilters 'armeabi-v7a'
+            }
+        }
+        // Combined APK: 32-bit flat (no OpenXR) + 64-bit with OpenXR.
+        both {
+            dimension "target"
+            ndk {
+                abiFilters 'armeabi-v7a', 'arm64-v8a'
             }
         }
     }
