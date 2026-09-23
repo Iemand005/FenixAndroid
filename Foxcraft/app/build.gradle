@@ -70,20 +70,19 @@ def nativeLibs = [
             main:  "${arm64BuildDir}/Foxcraft/libmain.so",
             openxr: "${arm64BuildDir}/bin/openxr/src/loader/libopenxr_loader.so",
         ],
-        armeabi_v7a: [
-            sdl:   "${v7aBuildDir}/bin/sdl/libSDL3.so",
-            main:  "${v7aBuildDir}/Foxcraft/libmain.so",
-            openxr: "${v7aBuildDir}/bin/openxr/src/loader/libopenxr_loader.so",
-        ],
-    ],
-    xr32: [
-        armeabi_v7a: [
-            sdl:   "${v7aBuildDir}/bin/sdl/libSDL3.so",
-            main:  "${v7aBuildDir}/Foxcraft/libmain.so",
-            openxr: "${v7aBuildDir}/bin/openxr/src/loader/libopenxr_loader.so",
-        ],
     ],
     flat: [
+        armeabi_v7a: [
+            sdl:  "${v7aFlatBuildDir}/bin/sdl/libSDL3.so",
+            main: "${v7aFlatBuildDir}/Foxcraft/libmain.so",
+        ],
+    ],
+    both: [
+        arm64_v8a: [
+            sdl:   "${arm64BuildDir}/bin/sdl/libSDL3.so",
+            main:  "${arm64BuildDir}/Foxcraft/libmain.so",
+            openxr: "${arm64BuildDir}/bin/openxr/src/loader/libopenxr_loader.so",
+        ],
         armeabi_v7a: [
             sdl:  "${v7aFlatBuildDir}/bin/sdl/libSDL3.so",
             main: "${v7aFlatBuildDir}/Foxcraft/libmain.so",
