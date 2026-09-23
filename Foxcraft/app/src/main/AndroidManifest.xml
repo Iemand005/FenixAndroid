@@ -71,7 +71,7 @@
             android:name="com.oculus.vr.focusaware"
             android:value="true" />
 
-        <activity android:name="SDLActivity"
+        <activity android:name="Foxcraft"
             android:label="@string/app_name"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleInstance"
