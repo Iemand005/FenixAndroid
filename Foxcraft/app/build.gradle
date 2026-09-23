@@ -89,16 +89,18 @@ def nativeLibs = [
     ],
 ]
 
-// Copies the CMake-built .so files into each flavor's jniLibs folder so the
-// packaged APK only contains the ABIs/libs that flavor was made for (stale
-// files in src/main/jniLibs never leak into the APK). Run this after rebuilding
-// the native libs, or just assemble — it is wired into each variant's preBuild
-// task when AGP exposes one.
-def syncNativeLibs = tasks.register('syncNativeLibs') {
-    group = 'build'
-    description = 'Copies CMake-built native libraries into each flavor jniLibs folder'
-    doLast {
-        nativeLibs.each { flavorName, flavorLibs ->
+// Copies the CMake-built .so files for a single flavor into that flavor's
+// jniLibs folder so the packaged APK only contains the ABIs/libs that flavor
+// was made for (stale files in src/main/jniLibs never leak into the APK).
+def syncNativeLibsForFlavor = { String flavorName, String taskSuffix ->
+    tasks.register("sync${taskSuffix}NativeLibs") {
+        group = 'build'
+        description = "Copies CMake-built native libraries for the ${flavorName} flavor into its jniLibs folder"
+        doLast {
+            def flavorLibs = nativeLibs[flavorName]
+            if (flavorLibs == null) {
+                return
+            }
             def jniRoot = file("${projectDir}/src/${flavorName}/jniLibs")
             flavorLibs.each { abi, libsByRole ->
                 def outDir = file("${jniRoot}/${abi.replace('_', '-')}")
@@ -120,14 +122,16 @@ def syncNativeLibs = tasks.register('syncNativeLibs') {
 
 // AGP 9 removed the task-based variant API, so the per-variant preBuild wiring
 // is done defensively after evaluation: if AGP still creates pre<Variant>Build
-// tasks, sync runs right before each variant builds; otherwise the .so files
-// already present in the flavor jniLibs folders are used as-is.
+// tasks, the flavor's sync task runs right before each variant builds;
+// otherwise the .so files already present in the flavor jniLibs folders are
+// used as-is.
 androidComponents {
     onVariants(androidComponents.selector().all()) { variant ->
         def flavorName = variant.flavorName
         def taskName = "pre${variant.name.capitalize()}Build"
+        def syncTask = syncNativeLibsForFlavor(flavorName, variant.name.capitalize())
         project.afterEvaluate {
-            tasks.findByName(taskName)?.dependsOn(syncNativeLibs)
+            tasks.findByName(taskName)?.dependsOn(syncTask)
         }
     }
 }
